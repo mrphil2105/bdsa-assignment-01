@@ -17,4 +17,22 @@ public class IteratorsTests
         // Assert
         Assert.Equal(flattened, result);
     }
+
+
+    [Fact]
+    public void Filter_FiltersEven_WhenGivenEvenNumberPredicate() {
+        //Arragne
+        var items = new[] {1, 2, 3, 4, 5};
+        
+        Predicate<int> even = Even;
+        bool Even(int i) => i % 2 == 0;
+
+        //Act
+        var result = Iterators.Filter(items, even);
+
+        //Assert
+        Assert.Equal(new[] {2, 4}, result);
+
+    }
+
 }
