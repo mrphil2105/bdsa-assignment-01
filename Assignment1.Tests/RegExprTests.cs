@@ -19,6 +19,11 @@ public class RegExprTests
                 "porta", "nisl", "nisl", "in", "elementum", "est", "convallis", "iaculis"
             }
         },
+        new object[]
+        {
+            new[] { "Number-words like 48653 and word1234 should also work." },
+            new[] { "Number", "words", "like", "48653", "and", "word1234", "should", "also", "work" }
+        }
     };
 
     [Theory]
