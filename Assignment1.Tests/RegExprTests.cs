@@ -37,4 +37,18 @@ public class RegExprTests
         // Assert
         Assert.Equal(words, result);
     }
+
+
+      [Fact]
+    public void Resolution_WhenGivenAStreamOfResolutions() {
+        // Arrange
+        var items = new[] {"1920x1080", "1024x768", "800x600", "640x480"};
+
+        // Act
+        var result = RegExpr.Resolution(items);
+
+        // Assert
+        Assert.Equal(new[]{(1920, 1080), (1024, 768), (800, 600), (640, 480)}, result);
+    }
+
 }
