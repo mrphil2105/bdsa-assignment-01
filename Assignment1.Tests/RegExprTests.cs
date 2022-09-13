@@ -51,4 +51,16 @@ public class RegExprTests
         Assert.Equal(new[]{(1920, 1080), (1024, 768), (800, 600), (640, 480)}, result);
     }
 
+    [Theory]
+    [InlineData("<a href=\"https://www.google.com/search?q=foo\">foo</a>", "a", new[] { "foo" })]
+    [InlineData("<span>foo</span><h1 id=\"section-0\">Title</h1><span class=\"fancy-text\">bar</span>", "span", new[] { "foo", "bar" })]
+    [InlineData("<p></p>", "p", new[] { "" })]
+    public void InnerText_ReturnsInnerTexts_WhenGivenHtmlAndTag(string html, string tag, string[] innerTexts)
+    {
+        // Act
+        var result = RegExpr.InnerText(html, tag);
+
+        // Assert
+        Assert.Equal(innerTexts, result);
+    }
 }
