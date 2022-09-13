@@ -49,6 +49,41 @@ public class RegExprTests
         }
     };
 
+    public static IEnumerable<object[]> HtmlWithAndWithoutLinks => new List<object[]>
+    {
+        new object[]
+        {
+            "<div>\n    <p>A <b>regular expression</b>, <b>regex</b> or <b>regexp</b> (sometimes called a <b>rational expression</b>) is, in <a href=\"https://en.wikipedia.org/wiki/Theoretical_computer_science\" title=\"Theoretical computer science\">theoretical computer science</a> and <a href=\"https://en.wikipedia.org/wiki/Formal_language\" title=\"Formal language\">formal language</a> theory, a sequence of <a href=\"https://en.wikipedia.org/wiki/Character_(computing)\" title=\"Character (computing)\">characters</a> that define a <i>search <a href=\"https://en.wikipedia.org/wiki/Pattern_matching\" title=\"Pattern matching\">pattern</a></i>. Usually this pattern is then used by <a href=\"https://en.wikipedia.org/wiki/String_searching_algorithm\" title=\"String searching algorithm\">string searching algorithms</a> for \"find\" or \"find and replace\" operations on <a href=\"https://en.wikipedia.org/wiki/String_(computer_science)\" title=\"String (computer science)\">strings</a>.</p>\n</div>\n",
+            new[]
+            {
+                (new Uri("https://en.wikipedia.org/wiki/Theoretical_computer_science"),
+                    "Theoretical computer science"),
+                (new Uri("https://en.wikipedia.org/wiki/Formal_language"), "Formal language"),
+                (new Uri("https://en.wikipedia.org/wiki/Character_(computing)"), "Character (computing)"),
+                (new Uri("https://en.wikipedia.org/wiki/Pattern_matching"), "Pattern matching"),
+                (new Uri("https://en.wikipedia.org/wiki/String_searching_algorithm"),
+                    "String searching algorithm"),
+                (new Uri("https://en.wikipedia.org/wiki/String_(computer_science)"),
+                    "String (computer science)")
+            }
+        },
+        new object[]
+        {
+            "<a href=\"https://www.google.com/\">Google</a><a href=\"https://itu.dk\" title=\"\">Go to ITU's website</a>",
+            new[]
+            {
+                (new Uri("https://www.google.com/"), "Google"),
+                (new Uri("https://itu.dk"), "Go to ITU's website")
+            }
+        },
+        new object[]
+        {
+            "<a href=\"\">foo</a>",
+            // Empty href attributes should not work.
+            Array.Empty<object>()
+        }
+    };
+
     [Theory]
     [MemberData(nameof(SentencesAndWords))]
     public void SplitLine_SplitsSentencesToWords_WhenGivenSentences(IEnumerable<string> sentences,
@@ -86,5 +121,16 @@ public class RegExprTests
 
         // Assert
         Assert.Equal(innerTexts, result);
+    }
+
+    [Theory]
+    [MemberData(nameof(HtmlWithAndWithoutLinks))]
+    public void Urls_ReturnsUrlsAndTitles_WhenGivenHtmlWithAnchors(string html, (Uri url, string title)[] urlTitles)
+    {
+        // Act
+        var result = RegExpr.Urls(html);
+
+        // Assert
+        Assert.Equal(urlTitles, result);
     }
 }
