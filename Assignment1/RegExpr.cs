@@ -27,5 +27,15 @@ public static class RegExpr
         }
     }
 
-    public static IEnumerable<string> InnerText(string html, string tag) => throw new NotImplementedException();
+    public static IEnumerable<string> InnerText(string html, string tag)
+    {
+        string pattern = @$"<{tag}[\S\s]*?>(?<text>[\S\s]*?)<\/{tag}>";
+
+        var matches = Regex.Matches(html, pattern);
+
+        foreach (Match match in matches)
+        {
+            yield return match.Groups["text"].Value;
+        }
+    }
 }
