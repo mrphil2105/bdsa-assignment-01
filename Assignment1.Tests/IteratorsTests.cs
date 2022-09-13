@@ -33,5 +33,4 @@ public class IteratorsTests
         // Assert
         Assert.Equal(new[] { 2, 4 }, result);
     }
-
 }
