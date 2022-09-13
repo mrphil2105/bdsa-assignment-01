@@ -29,7 +29,7 @@ public static class RegExpr
 
     public static IEnumerable<string> InnerText(string html, string tag)
     {
-        string pattern = @$"<{tag}[\S\s]*?>(?<text>[\S\s]*?)<\/{tag}>";
+        var pattern = @$"<{tag}[\S\s]*?>(?<text>[\S\s]*?)<\/{tag}>";
         const string replacePattern = @"<[a-z]+[\S\s]*?>(?<text>[\S\s]*?)<\/[a-z]+>";
 
         var matches = Regex.Matches(html, pattern);
@@ -37,6 +37,27 @@ public static class RegExpr
         foreach (Match match in matches)
         {
             yield return Regex.Replace(match.Groups["text"].Value, replacePattern, m => m.Groups["text"].Value);
+        }
+    }
+
+    public static IEnumerable<(Uri url, string title)> Urls(string html)
+    {
+        const string pattern =
+            "<a[\\S\\s]*?(href=\"(?<link>.+?)\")( title=\"(?<title>[\\S\\s]*?)\")?>(?<text>[\\S\\s]*?)<\\/a>";
+
+        var matches = Regex.Matches(html, pattern);
+
+        foreach (Match match in matches)
+        {
+            var url = match.Groups["link"].Value;
+            var title = match.Groups["title"].Value;
+
+            if (string.IsNullOrEmpty(title))
+            {
+                title = match.Groups["text"].Value;
+            }
+
+            yield return (new Uri(url), title);
         }
     }
 }
