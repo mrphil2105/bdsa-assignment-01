@@ -30,12 +30,13 @@ public static class RegExpr
     public static IEnumerable<string> InnerText(string html, string tag)
     {
         string pattern = @$"<{tag}[\S\s]*?>(?<text>[\S\s]*?)<\/{tag}>";
+        const string replacePattern = @"<[a-z]+[\S\s]*?>(?<text>[\S\s]*?)<\/[a-z]+>";
 
         var matches = Regex.Matches(html, pattern);
 
         foreach (Match match in matches)
         {
-            yield return match.Groups["text"].Value;
+            yield return Regex.Replace(match.Groups["text"].Value, replacePattern, m => m.Groups["text"].Value);
         }
     }
 }
